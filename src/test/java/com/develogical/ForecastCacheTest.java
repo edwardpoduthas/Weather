@@ -38,4 +38,22 @@ public class ForecastCacheTest {
 
         verify(delegate, times(1)).forecastFor(Region.LONDON,Day.MONDAY);
     }
+
+    @Test
+    public void GetForecastFromDelegateIfNotInCache() {
+        ForecastInterface delegate = mock(ForecastInterface.class);
+
+        given(delegate.forecastFor(Region.LONDON,Day.MONDAY)).willReturn(new Forecast("cold", 18));
+        ForecastCache underTest = new ForecastCache(delegate);
+        underTest.forecastFor(Region.LONDON, Day.MONDAY);
+        //Forecast fc = londonTest.forecastFor(Region.LONDON, Day.MONDAY);
+
+        verify(delegate, times(1)).forecastFor(Region.LONDON,Day.MONDAY);
+
+        given(delegate.forecastFor(Region.EDINBURGH,Day.TUESDAY)).willReturn(new Forecast("hot", 30));
+        underTest.forecastFor(Region.EDINBURGH, Day.TUESDAY);
+        //Forecast fc = edinburghTest.forecastFor(Region.EDINBURGH, Day.TUESDAY);
+
+        verify(delegate, times(1)).forecastFor(Region.EDINBURGH,Day.TUESDAY);
+    }
 }
