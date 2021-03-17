@@ -11,7 +11,7 @@ import java.util.Map;
 public class ForecastCache implements ForecastInterface {
 
     private ForecastInterface delegate;
-    private Forecast previousForecast;
+    private Map<String, Forecast>cache = new HashMap<>();
 
     public ForecastCache(ForecastInterface delegate) {
 
@@ -20,9 +20,10 @@ public class ForecastCache implements ForecastInterface {
 
     @Override
     public Forecast forecastFor(Region region, Day day){
-        if (previousForecast == null) {
-            previousForecast = delegate.forecastFor(region, day);
+        String key = region.name() + day.name();
+        if (!cache.containsKey(key)) {
+            cache.put(key, delegate.forecastFor(region, day));
         }
-        return previousForecast;
+        return cache.get(key);
     }
 }
